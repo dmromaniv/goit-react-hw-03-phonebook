@@ -4,18 +4,32 @@ import { Filter } from './Filter/Filter';
 import { ContactsList } from './ContactsList/ContactsList';
 import { Section } from './Section/Section';
 
+import {
+  getDataFromLocalStorage,
+  setDataToLocalStorage,
+} from 'service/localStorage';
 export class App extends Component {
   state = {
     contacts: [],
     filter: '',
   };
 
+  componentDidMount() {
+    this.setState({ contacts: getDataFromLocalStorage() });
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      setDataToLocalStorage(this.state.contacts);
+    }
+  }
+
   addNewContact = newContact => {
-    const existsContact = this.state.contacts.find(
+    const contactExists = this.state.contacts.find(
       contact => contact.name.toUpperCase() === newContact.name.toUpperCase()
     );
 
-    if (existsContact) {
+    if (contactExists) {
       alert(`${newContact.name} is already in contacts`);
     } else {
       this.setState(prevState => ({
